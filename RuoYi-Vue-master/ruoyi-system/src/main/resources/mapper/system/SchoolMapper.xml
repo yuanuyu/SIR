@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.SchoolMapper">
+    
+    <resultMap type="School" id="SchoolResult">
+        <result property="id"    column="id"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="schoolName"    column="school_name"    />
+        <result property="schoolAge"    column="school_age"    />
+        <result property="schoolArea"    column="school_area"    />
+    </resultMap>
+
+    <sql id="selectSchoolVo">
+        select id, del_flag, create_time, create_by, update_time, update_by, school_name, school_age, school_area from school
+    </sql>
+
+    <select id="selectSchoolList" parameterType="School" resultMap="SchoolResult">
+        <include refid="selectSchoolVo"/>
+        <where>  
+            <if test="schoolName != null  and schoolName != ''"> and school_name like concat('%', #{schoolName}, '%')</if>
+            <if test="schoolAge != null  and schoolAge != ''"> and school_age = #{schoolAge}</if>
+            <if test="schoolArea != null  and schoolArea != ''"> and school_area = #{schoolArea}</if>
+        </where>
+    </select>
+    
+    <select id="selectSchoolById" parameterType="Long" resultMap="SchoolResult">
+        <include refid="selectSchoolVo"/>
+        where id = #{id}
+    </select>
+
+    <insert id="insertSchool" parameterType="School" useGeneratedKeys="true" keyProperty="id">
+        insert into school
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="delFlag != null">del_flag,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="schoolName != null">school_name,</if>
+            <if test="schoolAge != null">school_age,</if>
+            <if test="schoolArea != null">school_area,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="delFlag != null">#{delFlag},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="schoolName != null">#{schoolName},</if>
+            <if test="schoolAge != null">#{schoolAge},</if>
+            <if test="schoolArea != null">#{schoolArea},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSchool" parameterType="School">
+        update school
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="delFlag != null">del_flag = #{delFlag},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="schoolName != null">school_name = #{schoolName},</if>
+            <if test="schoolAge != null">school_age = #{schoolAge},</if>
+            <if test="schoolArea != null">school_area = #{schoolArea},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteSchoolById" parameterType="Long">
+        delete from school where id = #{id}
+    </delete>
+
+    <delete id="deleteSchoolByIds" parameterType="String">
+        delete from school where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
